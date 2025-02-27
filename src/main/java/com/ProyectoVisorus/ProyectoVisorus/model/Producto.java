@@ -1,9 +1,12 @@
 package com.ProyectoVisorus.ProyectoVisorus.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "Producto")
@@ -17,16 +20,22 @@ public class Producto {
     private String descripcion;
 
     @ManyToOne
-    @JoinColumn(name = "categoria_id", nullable = false)
+    @JsonBackReference
+    @JoinColumn(name = "categoria_codigo", nullable = false) // Cambiado a categoria_codigo
     private Categoria categoria;
 
-    @ManyToOne
-    @JoinColumn(name = "codigo_barra", nullable = false) // Relación con CódigoBarra
-    @JsonBackReference
-    private CodigoBarra codigoBarra;
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true) // Relación con CódigoBarra
+    @JsonManagedReference  // Permitir serialización de los códigos de barras
+    private List<CodigoBarra> codigosBarra = new ArrayList<>();
 
     @Column(name = "activo")
     private boolean activo;
+
+    // Método para agregar códigos de barras y establecer la relación bidireccional
+    public void agregarCodigoBarra(CodigoBarra codigoBarra) {
+        codigosBarra.add(codigoBarra);
+        codigoBarra.setProducto(this);
+    }
 
     // Getters y Setters
     public String getCodigo() {
@@ -53,12 +62,12 @@ public class Producto {
         this.categoria = categoria;
     }
 
-    public CodigoBarra getCodigoBarra() {
-        return codigoBarra;
+    public List<CodigoBarra> getCodigosBarra() {
+        return codigosBarra;
     }
 
-    public void setCodigoBarra(CodigoBarra codigoBarra) {
-        this.codigoBarra = codigoBarra;
+    public void setCodigosBarra(List<CodigoBarra> codigosBarra) {
+        this.codigosBarra = codigosBarra;
     }
 
     public boolean isActivo() {
@@ -72,7 +81,6 @@ public class Producto {
     @Override
     public String toString() {
         return "Producto [codigo=" + codigo + ", descripcion=" + descripcion + ", categoria=" + categoria + 
-               ", codigoBarra=" + codigoBarra + ", activo=" + activo + "]";
+               ", codigosBarra=" + codigosBarra + ", activo=" + activo + "]";
     }
 }
-

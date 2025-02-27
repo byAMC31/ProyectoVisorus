@@ -40,30 +40,48 @@ public class CodigoBarraService {
         }
     }
 
+ // Actualizar un código de barra
+    public CodigoBarra updateCodigoBarra(Long id, String codigo, boolean activo) {
+        // Buscar el código de barras por ID
+        Optional<CodigoBarra> optionalCodigoBarra = codigoBarraRepository.findById(id);
+        if (optionalCodigoBarra.isPresent()) {
+            CodigoBarra codigoBarra = optionalCodigoBarra.get();
+
+            // Si el nuevo código de barras es diferente, actualizarlo
+            if (!codigoBarra.getCodigo().equals(codigo)) {
+                // Verificar si el nuevo código ya existe
+                Optional<CodigoBarra> existingCodigoBarra = codigoBarraRepository.findByCodigo(codigo);
+                if (existingCodigoBarra.isPresent()) {
+                    return null;  // Ya existe un código de barras con ese valor
+                }
+                // Actualizar el código
+                codigoBarra.setCodigo(codigo);
+            }
+
+            // Actualizar el estado 'activo'
+            codigoBarra.setActivo(activo);
+
+            // Guardar los cambios
+            return codigoBarraRepository.save(codigoBarra);
+        }
+
+        return null;  // Si no se encuentra el código de barras con el ID dado
+    }
+
+
+
     
-    // Actualizar un código de barra
-    public CodigoBarra updateCodigoBarra(String codigo, boolean activo) {
+ // Eliminar un código de barra por id
+    public CodigoBarra deleteCodigoBarra(Long id) {
         CodigoBarra codigoBarra = null;
-        if (codigoBarraRepository.existsById(codigo)) {
-            codigoBarra = codigoBarraRepository.findByCodigo(codigo).get();
-            codigoBarra.setActivo(activo);  // Solo actualizamos el estado activo
-            codigoBarraRepository.save(codigoBarra);
+        if (codigoBarraRepository.existsById(id)) {  // Ahora usas Long para el ID
+            codigoBarra = codigoBarraRepository.findById(id).get();
+            codigoBarraRepository.deleteById(id);
         }
         return codigoBarra;
     }
-
     
-    // Eliminar un código de barra
-    public CodigoBarra deleteCodigoBarra(String codigo) {
-        CodigoBarra codigoBarra = null;
-        if (codigoBarraRepository.existsById(codigo)) {
-            codigoBarra = codigoBarraRepository.findByCodigo(codigo).get();
-            codigoBarraRepository.deleteById(codigo);
-        }
-        return codigoBarra;
-    }
     
-
   
     
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 import javax.persistence.*;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 
 @Entity
@@ -13,14 +13,29 @@ import javax.persistence.*;
 public class CodigoBarra {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // Clave primaria autoincremental
+    private Long id;
+
     @Column(length = 20, unique = true, nullable = false)
-    private String codigo;
+    private String codigo; // Valor del código de barras
 
     @Column(name = "activo")
     private boolean activo;
 
-    @OneToMany(mappedBy = "codigoBarra", cascade = CascadeType.ALL) // Relación bidireccional
-    private List<Producto> productos = new ArrayList<>();
+    @ManyToOne
+    @JoinColumn(name = "producto_codigo", nullable = false)
+    @JsonBackReference  // Evitar serialización infinita en el lado de CódigoBarra
+    private Producto producto;
+
+
+    // Getters y Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCodigo() {
         return codigo;
@@ -38,17 +53,16 @@ public class CodigoBarra {
         this.activo = activo;
     }
 
-    public List<Producto> getProductos() {
-        return productos;
+    public Producto getProducto() {
+        return producto;
     }
 
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
+    public void setProducto(Producto producto) {
+        this.producto = producto;
     }
 
     @Override
     public String toString() {
-        return "CodigoBarra [codigo=" + codigo + ", activo=" + activo + "]";
+        return "CodigoBarra [id=" + id + ", codigo=" + codigo + ", activo=" + activo + "]";
     }
 }
-
