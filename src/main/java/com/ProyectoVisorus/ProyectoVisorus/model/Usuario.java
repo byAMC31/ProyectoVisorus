@@ -2,53 +2,69 @@ package com.ProyectoVisorus.ProyectoVisorus.model;
 
 
 import javax.persistence.*;
-import java.util.Set;
 
 @Entity
+@Table(name = "usuarios")
 public class Usuario {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "id", unique = true, nullable = false)
+	private Long id;
+	@Column(nullable = false)
+	private String email;
+	@Column(nullable = false)
+	private String password;
+	@Column(nullable = false)
+	private String rol;
+	
+	
+	public Usuario(Long id, String email, String password, String rol) {
+		super();
+		this.id = id;
+		this.email = email;
+		this.password = password;
+		this.rol = rol;
+	}
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	
+	public Usuario() {
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 
-    private String username;
-    private String password;
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
-    @Column(name = "role")
-    private Set<String> roles;
+	@Override
+	public String toString() {
+		return "Usuario [id=" + id + ", email=" + email + ", password=" + password + ", rol=" + rol + "]";
+	}
 
-    // Getters y Setters
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+	public String getRol() {
+		return rol;
+	}
 
-    public String getUsername() {
-        return username;
-    }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setRol(String rol) {
+		this.rol = rol;
+	}
 
-    public String getPassword() {
-        return password;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public Set<String> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(Set<String> roles) {
-        this.roles = roles;
-    }
+	
+	
+	
 }

@@ -1,32 +1,81 @@
 package com.ProyectoVisorus.ProyectoVisorus.service;
 
 
-import com.ProyectoVisorus.ProyectoVisorus.Repository.UserRepository;
+import com.ProyectoVisorus.ProyectoVisorus.Repository.UsuariosRepository;
+import com.ProyectoVisorus.ProyectoVisorus.dto.UserLogin;
 import com.ProyectoVisorus.ProyectoVisorus.model.Usuario;
 
+import java.util.List;
+import java.util.Optional;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UsuarioService implements UserDetailsService {
+public class UsuarioService {
+	private final UsuariosRepository usuariosRepository;
+	
+	@Autowired
+	private PasswordEncoder encoder;
+	
+	@Autowired
+	public UsuarioService(UsuariosRepository usuariosRepository) {
+		this.usuariosRepository = usuariosRepository;
+	}
+	
+	// Obtener todos los usuarios
+	public List<Usuario> getAllUsers() {
+		return usuariosRepository.findAll();
+	}
+	
+	// Obtener 1 usuario
+	public Usuario getUser(Long id) {
+		if (usuariosRepository.existsById(id)) {
+			return usuariosRepository.findById(id).get();
+		}
+		return null;
+	}
+	 
+	
+	// Obtener 1 usuario por email
+	public Usuario getUserByEmail(String email) {
+	    return usuariosRepository.findByEmail(email).orElse(null); 
+	}
 
-    @Autowired
-    private UserRepository usuarioRepository;
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+	// Borrar usuario
+	public Usuario delUser(Long id) {
+		Usuario usr = getUser(id);
+		if (usr != null ) {
+			usuariosRepository.deleteById(id);
+		}
+		return usr;
+	}
+	
+	// Añadir usuario
+	public Usuario addUser(Usuario usuario) {
+		Optional<Usuario> user = usuariosRepository.findByEmail(usuario.getEmail());
+		if(user.isEmpty()) {
+			usuario.setPassword(encoder.encode(usuario.getPassword()));
+			return usuariosRepository.save(usuario);
+		}else {
+			return null;
+		}
+	}
+	
 
-        // Mantén el prefijo "ROLE_" en los roles
-        return User.builder()
-                .username(usuario.getUsername())
-                .password(usuario.getPassword()) // Contraseña en texto plano
-                .roles(usuario.getRoles().toArray(new String[0]))  // Asigna los roles al usuario
-                .build();
-    }
+
+	public boolean validateUser(UserLogin user) {
+		Optional<Usuario> usr = usuariosRepository.findByEmail(user.getEmail());
+		if (usr.isPresent()) {
+			
+			Usuario tmpUser = usr.get();
+			if (encoder.matches(user.getPassword(), tmpUser.getPassword())) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
