@@ -43,10 +43,10 @@ public class CodigoBarraController {
 
     
     
-    // Método para eliminar un código de barras por su código
-    @DeleteMapping(path = "{codigo}")
-    public CodigoBarra deleteCodigoBarra(@PathVariable("codigo") String codigo) {
-        return codigoBarraService.deleteCodigoBarra(codigo);
+    //Método para eliminar un código de barras por id
+    @DeleteMapping(path = "/{id}")
+    public CodigoBarra deleteCodigoBarra(@PathVariable("id") Long id) {
+        return codigoBarraService.deleteCodigoBarra(id);
     }
 
     
@@ -58,14 +58,15 @@ public class CodigoBarraController {
 
     
     
-    // Método para actualizar el estado de un código de barras
-    @PutMapping(path = "{codigo}")
+ // Método para actualizar el estado de un código de barras
+    @PutMapping(path = "/{id}")
     public CodigoBarra updateCodigoBarra(
-            @PathVariable("codigo") String codigo,
-            @RequestParam boolean activo) {
-        return codigoBarraService.updateCodigoBarra(codigo, activo);
+            @PathVariable("id") Long id,  // Utilizamos el id
+            @RequestParam String codigo,  // El nuevo código de barras
+            @RequestParam boolean activo) {  // El nuevo estado activo
+        return codigoBarraService.updateCodigoBarra(id, codigo, activo);  // Llamamos al servicio para actualizar
     }
-    
-    
+
+
     
 }

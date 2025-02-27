@@ -71,7 +71,11 @@ public class ProductosController {
     }
 
     
-    
+    @PutMapping(path = "/{codigo}")
+    public Producto updateProducto(@PathVariable("codigo") String codigo, @RequestBody Producto productoRequest) {
+        return productosService.updateProducto(codigo, productoRequest);
+    }
+
     
     
 }

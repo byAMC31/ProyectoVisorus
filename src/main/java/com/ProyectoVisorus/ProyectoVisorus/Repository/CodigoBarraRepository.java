@@ -8,10 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface CodigoBarraRepository extends JpaRepository<CodigoBarra, String> {
+public interface CodigoBarraRepository extends JpaRepository<CodigoBarra, Long> {
 
     // Buscar el Código de Barra y obtener el Producto asociado
     Optional<CodigoBarra> findByCodigo(String codigo);
+    Optional<CodigoBarra> findById(Long id);
 
     // Buscar todos los códigos de barras activos
     List<CodigoBarra> findByActivo(boolean activo);

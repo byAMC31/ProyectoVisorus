@@ -46,11 +46,7 @@ public class JwtFilter extends GenericFilterBean {
                 && httpServletRequest.getRequestURI().contains("/api/login");
 
         // Determinar si la solicitud está protegida (requiere un token)
-        boolean isProtectedMethod = !isCreateUserRequest && !isLoginRequest 
-                && (("POST".equals(httpServletRequest.getMethod()) && !httpServletRequest.getRequestURI().contains("/api/usuarios/")) 
-                || ("GET".equals(httpServletRequest.getMethod()) && !httpServletRequest.getRequestURI().contains("/api/productos/"))
-                || "PUT".equals(httpServletRequest.getMethod()) 
-                || "DELETE".equals(httpServletRequest.getMethod()));
+        boolean isProtectedMethod = !isCreateUserRequest && !isLoginRequest;
 
         // Si la solicitud está protegida, validar el token
         if (isProtectedMethod) {
